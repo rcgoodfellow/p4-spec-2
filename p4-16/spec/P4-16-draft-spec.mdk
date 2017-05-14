@@ -710,7 +710,9 @@ actions, and it provides information about the packet payload (e.g.,
 the size of the remaining payload data) to the demux block. As soon as
 a packet's processing is completed by the parser, the match-action
 pipeline is invoked with the associated metadata as inputs (packet
-headers and user-defined metadata).
+headers and user-defined metadata). This occurs even for packets
+reaching the ```reject``` state in the parser---such packets will
+have ```parseError``` containing a value other than ```error.NoError```.
 
 ### Demux block
 
