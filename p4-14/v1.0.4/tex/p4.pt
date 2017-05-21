@@ -646,11 +646,17 @@ valid bit for a metadata field, defining a separate metadata flag to
 represent that field's validity is a reasonable work around.
 \end{adjustwidth}
 
-When an invalid packet header is matched in a table (i.e., when a value is
-specified for exact or ternary matches against the field), its value is
-undefined. A match operation may explicitly check if a header
-instance (or field) is valid. Only valid packet headers are considered
-for deparsing (see Section~\ref{sec:deparsing}).
+When a field of a packet header that is currently invalid is matched
+in a table, the contents of the search key are undefined for that
+field. This may lead to matching a table entry that is unpredictable,
+depending upon the contents of the currently installed table entries.
+For example, if such fields are ternary type matches in a table, and
+all current table entries are "don't care" for all bits of those
+fields, then the behavior is predictable in that state, even though
+the contents of those fields are undefined. A match operation may
+explicitly check if a header instance is valid. Only valid packet
+headers are considered for deparsing (see
+Section~\ref{sec:deparsing}).
 
 \SUBSUBSECTION{Header Stacks}{headerstacks}
 
