@@ -1870,8 +1870,7 @@ is less than that of the destination, it will be coerced to the larger field
 size according to its signedness.
 
 If the parent header instance of \texttt{dest} is not valid, the action has no effect. 
-If \texttt{value} is a field reference and its parent header is not valid, the operation 
-has no effect.
+If \texttt{value} is a field reference and its parent header is not valid, the operation leaves \texttt{dest} with an undefined value.
 
 If \texttt{mask} is specified, then the field becomes \texttt{(current_value \& $\sim$ mask) | 
 (value \& mask)}.  If \texttt{mask} is not specified, the operation has the effect 
@@ -1892,7 +1891,7 @@ Add a value to a field.
 { % Description
 The \texttt{dest} field's value is updated by adding the value parameter. The \texttt{value} parameter 
 may be from a table parameter, an immediate value or a field reference; see \texttt{modify_field} above.  If \texttt{value} is a field reference 
-and its parent header is not valid, then no change is made to \texttt{dest}. A description 
+and its parent header is not valid, then the operation leaves \texttt{dest} with an undefined value. A description
 of the logical behavior follows in the Section~\ref{sec:fieldasgmt} below.
 If \texttt{value} is an immediate value, it may 
 be negative.
@@ -1913,8 +1912,8 @@ Add value1 and value2 and store in dest.
 The \texttt{dest} field's value is updated with the result of adding
 the two value parameters. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}.  A description of the logical
+is a field reference and its parent header is not valid, then
+the operation leaves \texttt{dest} with an undefined value.  A description of the logical
 behavior follows in the Section~\ref{sec:fieldasgmt} below.  If a
 \texttt{value} is an immediate value, it may be negative.
 }
@@ -1933,7 +1932,7 @@ Subtract a value from a field.
 The \texttt{dest} field's value is updated by subtracting the value parameter. The \texttt{value} parameter 
 may be from a table parameter, an immediate value or a field reference; see \texttt{modify_field} above.  
 If \texttt{value} is a field reference 
-and its parent header is not valid, then no change is made to \texttt{dest}. 
+and its parent header is not valid, then the operation leaves \texttt{dest} with an undefined value.
 If a \texttt{value} is an immediate value, it may be negative.
 
 }
@@ -1953,8 +1952,8 @@ Subtract value2 from value1 and store in dest.
 The \texttt{dest} field's value is updated with the result of subtracting
 \texttt{value2} from \texttt{value1}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above.  If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}. If a
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value. If a
 \texttt{value} is an immediate value, it may be negative.
 }
 
@@ -1977,6 +1976,10 @@ The hash value is used to generate a value between \texttt{base} and
 The result can be used as a hash digest of a long key (such as 5-tuple) or as 
 an offset/index to reference a register array. Normal value conversion 
 takes place when setting \texttt{dest} to the result.
+
+If any of the fields in the \texttt{field_list_calc} have a parent
+header that is not valid, then the operation leaves \texttt{dest} with
+an undefined value.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1996,6 +1999,10 @@ and stored in \texttt{dest}.
 Targets may impose different restrictions to \texttt{lower_bound} to \texttt{upper_bound}: 
 for example, a target may require \texttt{lower_bound} 
 to be zero and \texttt{upper_bound} to be 2**n - 1.
+
+If either of \texttt{lower_bound} or \texttt{upper_bound} is a field reference
+and its parent header is not valid, then the operation leaves
+\texttt{dest} with an undefined value.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2013,8 +2020,8 @@ Compute a bitwise AND of two values.
 The \texttt{dest} field's value is updated with the result of bitwise AND of
 \texttt{value1} and \texttt{value2}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}.
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value.
 Targets may require \texttt{dest}, \texttt{value1} and \texttt{value2} to
 be the same bit width.
 }
@@ -2034,8 +2041,8 @@ Compute a bitwise OR of two values.
 The \texttt{dest} field's value is updated with the result of bitwise OR of
 \texttt{value1} and \texttt{value2}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}. 
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value.
 Targets may require \texttt{dest}, \texttt{value1} and \texttt{value2} to
 be the same bit width.
 }\\
@@ -2055,8 +2062,8 @@ Compute a bitwise XOR of two values.
 The \texttt{dest} field's value is updated with the result of bitwise XOR of
 \texttt{value1} and \texttt{value2}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}. 
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value.
 Targets may require \texttt{dest}, \texttt{value1} and \texttt{value2} to
 be the same bit width.
 }\\
@@ -2076,8 +2083,8 @@ Bitwise shift left of \texttt{value1} by \texttt{value2} number of bits.
 The \texttt{dest} field's value is updated with the result of 
 \texttt{value1} $<<$ \texttt{value2}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}. \texttt{value2} must be positive. 
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value. \texttt{value2} must be positive.
 }\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2095,8 +2102,8 @@ Bitwise shift right of \texttt{value1} by \texttt{value2} number of bits.
 The \texttt{dest} field's value is updated with the result of 
 \texttt{value1} $>>$ \texttt{value2}. Each \texttt{value} parameter may be from a
 table parameter, an immediate value or a field reference; see \texttt{modify_field} above. If either \texttt{value}
-is a field reference and its parent header is not valid, then no
-change is made to \texttt{dest}. \texttt{value2} must be positive. 
+is a field reference and its parent header is not valid, then the operation
+leaves \texttt{dest} with an undefined value. \texttt{value2} must be positive.
 }\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
