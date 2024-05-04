@@ -5,6 +5,7 @@ print_supported_os_versions() {
     1>&2 echo "    Ubuntu 18.04"
     1>&2 echo "    Ubuntu 20.04"
     1>&2 echo "    Ubuntu 22.04"
+    1>&2 echo "    Ubuntu 24.04"
 }
 
 echo "------------------------------------------------------------"
@@ -45,7 +46,7 @@ fi
 DISTRIBUTOR_ID=`lsb_release -si`
 UBUNTU_RELEASE=`lsb_release -sr`
 
-if [ ${DISTRIBUTOR_ID} != "Ubuntu" -o \( ${UBUNTU_RELEASE} != "16.04" -a ${UBUNTU_RELEASE} != "18.04" -a ${UBUNTU_RELEASE} != "20.04" -a ${UBUNTU_RELEASE} != "22.04" \) ]
+if [ ${DISTRIBUTOR_ID} != "Ubuntu" -o \( ${UBUNTU_RELEASE} != "16.04" -a ${UBUNTU_RELEASE} != "18.04" -a ${UBUNTU_RELEASE} != "20.04" -a ${UBUNTU_RELEASE} != "22.04" -a ${UBUNTU_RELEASE} != "24.04" \) ]
 then
     warning
     1>&2 echo ""
