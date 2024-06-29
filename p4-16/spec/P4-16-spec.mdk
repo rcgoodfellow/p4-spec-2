@@ -5514,6 +5514,71 @@ use to implement generalized switch statements.
 
 [GeneralizedSwitchStatements]: <https://github.com/p4lang/p4-spec/blob/master/p4-16/spec/docs/implementing-generalized-switch-statements.md>
 
+## Loop statement { #sec-loop-stmt }
+
+The loop statement uses syntax and semantics familiar from several
+programming languages.  Unlike those languages, P4 has a strong
+emphasis on specifying behavior in a single control that can be
+executed in a guaranteed-finite number of steps.  Thus it is expected
+that most P4 implementations will restrict the programs they support
+to ones where all loops are provably finite at compile time.
+
+One technique to guarantee this is for the P4 compiler to completely
+unroll the loop at compile time, giving a compile-time error if it
+determines that the loop might continue after an
+implementation-specific maximum number of iterations.  The reference
+P4 compiler `p4c` [P4CCompiler] implements a mid-end pass
+`TodoPassName` that does this.  Implementers of target-specific back
+ends may use this pass if they judge it to be useful.
+
+[P4CCompiler]: <https://github.com/p4lang/p4c>
+
+Loop statements are allowed in control `apply` blocks, actions,
+functions, and parser statements.
+
+The loop statement has two forms.
+
+~ Begin P4Grammar
+[INCLUDE=grammar.mdk:conditionalStatement]
+~ End P4Grammar
+
+The first form of loop uses 3 "clauses" as the `for` loop in C does,
+where:
+
++ The first clause containing initialization statements, executed once
+  before the loop begins.
++ The second is an expression evaluating to a Boolean value that is
+  evaluated once before each loop iteration.  The body is executed
+  if and only if this condition is true.
++ The third is a comma-separated list of update statements, executed
+  once each time after the body is executed.
+
+TODO: Give example that
+
+TODO: Does the current p4c implementation enforce the scoping of
+variables declared with a type in the initialization statements, so
+that it is local to the `for` statement?  I believe yes, from limited
+testing.  Explain with a short example.
+
+TODO: Did Chris implement the restriction that loop variables are
+local compile-time known values within the loop body?  I believe no,
+in that the loop index cannot be used as a bit slice index.  The loop
+variable can also be assigned values with assignment statements in the
+loop body.
+
+TODO: Does the current p4c explicitly allow loop variables without
+type declaration in the initialization statements?  And they must be
+declared earlier, and their final value lives on?  Yes, from a simple
+test program.
+
+The second form of loop uses 
+
+TODO: Does the implementation require a type declaration for the loop
+variable, or is it optional?  If required, write a test program to
+verify whether the scope is limited to the loop body.
+
+`break` and `continue` statements are supported within loops.
+
 # Packet parsing { #sec-packet-parsing }
 
 This section describes the P4 constructs specific to parsing network packets.

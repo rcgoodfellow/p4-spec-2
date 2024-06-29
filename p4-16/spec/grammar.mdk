@@ -98,7 +98,9 @@ annotationToken
     | APPLY
     | BOOL
     | BIT
+    | BREAK
     | CONST
+    | CONTINUE
     | CONTROL
     | DEFAULT
     | ELSE
@@ -108,6 +110,7 @@ annotationToken
     | EXIT
     | EXTERN
     | FALSE
+    | FOR
     | HEADER
     | HEADER_UNION
     | IF
@@ -731,9 +734,13 @@ typedefDeclaration
 
 // BEGIN:assignmentOrMethodCallStatement
 assignmentOrMethodCallStatement
-    : lvalue "(" argumentList ")" ";"
-    | lvalue "<" typeArgumentList ">" "(" argumentList ")" ";"
-    | lvalue "="  expression ";"
+    : assignmentOrMethodCallStatementWithoutSemicolon ";"
+    ;
+
+assignmentOrMethodCallStatementWithoutSemicolon
+    : lvalue "(" argumentList ")"
+    | lvalue "<" typeArgumentList ">" "(" argumentList ")"
+    | lvalue "="  expression
     ;
 // END:assignmentOrMethodCallStatement
 
@@ -763,6 +770,18 @@ conditionalStatement
     ;
 // END:conditionalStatement
 
+// BEGIN:breakStatement
+breakStatement
+    : BREAK ";"
+    ;
+// END:breakStatement
+
+// BEGIN:continueStatement
+continueStatement
+    : CONTINUE ";"
+    ;
+// END:continueStatement
+
 // To support direct invocation of a control or parser without instantiation
 // BEGIN:directApplication
 directApplication
@@ -778,8 +797,11 @@ statement
     | emptyStatement
     | blockStatement
     | returnStatement
+    | breakStatement
+    | continueStatement
     | exitStatement
     | switchStatement
+    | forStatement
     ;
 
 // BEGIN:blockStatement
@@ -829,6 +851,57 @@ statementOrDeclaration
     | statement
     ;
 // END:statementOrDeclaration
+
+// BEGIN:forStatement
+forStatement
+    : optAnnotations FOR "(" forInitStatements ";" expression ";" forUpdateStatements ")" statement
+    | optAnnotations FOR "(" typeRef name IN forCollectionExpr ")" statement
+    | optAnnotations FOR "(" prefixedNonTypeName IN forCollectionExpr ")" statement
+    ;
+// END:forStatement
+
+// BEGIN:forInitStatements
+forInitStatements
+    :
+    | forInitStatementsNonEmpty
+    ;
+// END:forInitStatements
+
+// BEGIN:forInitStatementsNonEmpty
+forInitStatementsNonEmpty
+    : declOrAssignmentOrMethodCallStatement
+    | forInitStatementsNonEmpty "," declOrAssignmentOrMethodCallStatement
+    ;
+// END:forInitStatementsNonEmpty
+
+// BEGIN:declOrAssignmentOrMethodCallStatement
+declOrAssignmentOrMethodCallStatement
+    : variableDeclarationWithoutSemicolon
+    | assignmentOrMethodCallStatementWithoutSemicolon
+    ;
+// END:declOrAssignmentOrMethodCallStatement
+
+// BEGIN:forUpdateStatements
+forUpdateStatements
+    :
+    | forUpdateStatementsNonEmpty
+    ;
+// END:forUpdateStatements
+
+// BEGIN:forUpdateStatementsNonEmpty
+forUpdateStatementsNonEmpty
+    : assignmentOrMethodCallStatementWithoutSemicolon
+    | forUpdateStatementsNonEmpty "," assignmentOrMethodCallStatementWithoutSemicolon
+    ;
+// END:forUpdateStatementsNonEmpty
+
+// BEGIN:forCollectionExpr
+forCollectionExpr
+    : expression
+    | expression ".." expression
+    | typeRef
+    ;
+// END:forCollectionExpr
 
 /************************* TABLE *********************************/
 
@@ -912,8 +985,12 @@ actionDeclaration
 
 // BEGIN:variableDeclaration
 variableDeclaration
-    : annotations typeRef name optInitializer ";"
-    | typeRef name optInitializer ";"
+    : variableDeclarationWithoutSemicolon ";"
+    ;
+
+variableDeclarationWithoutSemicolon
+    : annotations typeRef name optInitializer
+    | typeRef name optInitializer
     ;
 // END:variableDeclaration
 
