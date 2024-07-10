@@ -322,6 +322,9 @@ cards, FPGAs, software switches, and hardware ASICs. As such, the
 language is restricted to constructs that can be efficiently
 implemented on all of these platforms.
 
+TODO: Should the following paragraph be modified because of adding
+loops to the language?  If so, how?
+
 Assuming a fixed cost for table lookup operations and interactions
 with extern objects, all P4 programs (i.e., parsers and controls)
 execute a constant number of operations for each byte of an input
