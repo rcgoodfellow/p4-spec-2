@@ -5521,14 +5521,15 @@ use to implement generalized switch statements.
 
 The loop statement uses syntax and semantics familiar from several
 programming languages.  Unlike those languages, P4 has a strong
-emphasis on specifying behavior in a single control that can be
-executed in a guaranteed-finite number of steps.  Thus it is expected
-that most P4 implementations will restrict the programs they support
-to ones where all loops are provably finite at compile time.
+emphasis on specifying behavior that, during a single execution of a
+control, can be executed in a number of steps that is bounded to a
+finite value known at compile time.  Thus it is expected that most P4
+implementations will restrict the programs they support to ones where
+all loops are provably finite at compile time.
 
 One technique to guarantee this is for the P4 compiler to completely
-unroll the loop at compile time, giving a compile-time error if it
-determines that the loop might continue after an
+unroll the loop at compile time, giving a compile-time error if the
+compiler determines that the loop might continue after an
 implementation-specific maximum number of iterations.  The reference
 P4 compiler `p4c` [P4CCompiler] implements a mid-end pass
 `TodoPassName` that does this.  Implementers of target-specific back
@@ -5545,11 +5546,11 @@ The loop statement has two forms.
 [INCLUDE=grammar.mdk:conditionalStatement]
 ~ End P4Grammar
 
-The first form of loop uses 3 "clauses" as the `for` loop in C does,
-where:
+The first form of loop uses 3 "clauses", as the `for` loop in C, C++,
+and Java does, where:
 
-+ The first clause containing initialization statements, executed once
-  before the loop begins.
++ The first clause contains a comma-separated list of initialization
+  statements, executed once before the loop begins.
 + The second is an expression evaluating to a Boolean value that is
   evaluated once before each loop iteration.  The body is executed
   if and only if this condition is true.
@@ -5558,29 +5559,28 @@ where:
 
 TODO: Give example that
 
-TODO: Does the current p4c implementation enforce the scoping of
-variables declared with a type in the initialization statements, so
-that it is local to the `for` statement?  I believe yes, from limited
-testing.  Explain with a short example.
+TODO: The current p4c implementation enforces the scoping of variables
+declared with a type in the initialization statements, so that it is
+local to the `for` statement.  Explain with a short example.
 
-TODO: Did Chris implement the restriction that loop variables are
-local compile-time known values within the loop body?  I believe no,
-in that the loop index cannot be used as a bit slice index.  The loop
-variable can also be assigned values with assignment statements in the
-loop body.
-
-TODO: Does the current p4c explicitly allow loop variables without
-type declaration in the initialization statements?  And they must be
-declared earlier, and their final value lives on?  Yes, from a simple
-test program.
+TODO: The current p4c allows loop variables without a type declaration
+in the initialization statements, declared earlier, and their final
+value lives on?  Yes, but only for 3-clause loops.  Such a variable
+must be declared before the loop.  Its final value after the loop's
+execution is visible after the loop completes.  Give example.
 
 The second form of loop uses 
 
-TODO: Does the implementation require a type declaration for the loop
-variable, or is it optional?  If required, write a test program to
-verify whether the scope is limited to the loop body.
+TODO: The implementation _requires_ a type declaration for the loop
+variable, and the spec should, too.
 
 `break` and `continue` statements are supported within loops.
+
+Note that for all P4 loops, the loop variable name is a run-time
+variable expression, i.e. it is never a compile-time known value.
+Thus the loop variable cannot be used in places where a compile-time
+known value is required, e.g. it cannot be used as the upper or lower
+bound in a slice expression.
 
 # Packet parsing { #sec-packet-parsing }
 
